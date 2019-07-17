@@ -20,17 +20,18 @@ class ImgToPdf(wx.Frame):
         self.open_button.Bind(wx.EVT_BUTTON, self.conpdf)
 
         self.content_text = wx.TextCtrl(self, pos=(5, 55), size=(475, 200), style=wx.TE_MULTILINE)
-     
 
+        
     # 生成PDF
     def conpdf(self, event):
-
         self.content_text.AppendText("开始生成pdf\n")
+        # 获取图片文件夹所在路径
         path = self.url_text.GetValue()
         pdf_name = os.path.basename(path)
         picList = []
         picType = ['.jpg', '.jpeg', '.bmp', '.png', '.gif']
         
+        # 遍历图片文件夹内的图片，生成图片列表
         file_list = os.listdir(path)
         pic_name = []
         im_list = []
@@ -53,24 +54,24 @@ class ImgToPdf(wx.Frame):
         for x in pic_name:
             if "jpeg" in x:
                 new_pic.append(x)            
-
+        
+        # 打开第一张图片，并删除图片列表中第一张图片
         im1 = Image.open(os.path.join(path, new_pic[0]))
         if im1.mode == "RGBA":
             im1 = im1.convert('RGB')
         new_pic.pop(0)
         
-
-        
+        # 将图片打开分别添加至im_list
         for i in new_pic:
             img = Image.open(os.path.join(path, i))
-            # im_list.append(Image.open(i))
             if img.mode == "RGBA":
                 img = img.convert('RGB')
                 im_list.append(img)
             else:
                 im_list.append(img)
+
+        # 将首张图片添加im_list，并保存为pdf至程序所在目录
         im1.save(pdf_name+'.pdf', "PDF", resolution=100.0, save_all=True, append_images=im_list)
-        
         self.content_text.AppendText("生成pdf完成\n")
         self.content_text.AppendText("================================\n")
         
